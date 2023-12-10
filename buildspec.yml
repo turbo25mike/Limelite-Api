@@ -1,0 +1,27 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - echo install step...
+      - /usr/local/bin/dockerd-entrypoint.sh
+  pre_build:
+    commands:
+      - echo logging in to AWS ECR...
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:=latest}
+  build:
+    commands:
+      - echo build Docker image on `date`
+      - cd API
+      - docker build -t $AWS_ECR_REPOSITORY_URI:latest .
+      - docker tag $AWS_ECR_REPOSITORY_URI:latest $AWS_ECR_REPOSITORY_URI:$IMAGE_TAG
+  post_build:
+    commands:
+      - echo build Docker image complete `date`
+      - echo push latest Docker images to ECR...
+      - docker push $AWS_ECR_REPOSITORY_URI:latest
+      - docker push $AWS_ECR_REPOSITORY_URI:$IMAGE_TAG
+      - printf '[{"name":"%s","imageUri":"%s"}]' $AWS_ECS_CONTAINER_NAME $AWS_ECR_REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+artifacts:
+  files: imagedefinitions.json

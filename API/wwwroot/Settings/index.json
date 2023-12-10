@@ -1,0 +1,10 @@
+﻿{
+  "DaysToCheck": 7,
+  "EulaVersion": 0,
+  "Devices": [ "RX5000" ],
+  "SupportTicket": {
+    "Subject": "Leupold | Mobile App Support",
+    "To": "appsupport@leupold.com",
+    "Body": "User ID:{APPID} \n\nIssue: "
+  }
+}

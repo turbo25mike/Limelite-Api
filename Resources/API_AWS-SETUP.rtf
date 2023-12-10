@@ -1,0 +1,432 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2709
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fmodern\fcharset0 Courier;\f1\fnil\fcharset0 HelveticaNeue;\f2\fnil\fcharset0 HelveticaNeue-Bold;
+}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red18\green19\blue24;\red255\green255\blue255;
+\red11\green93\blue173;\red238\green249\blue255;\red249\green249\blue249;}
+{\*\expandedcolortbl;;\cssrgb\c0\c1\c1;\cssrgb\c8627\c9804\c12157;\cssrgb\c100000\c100000\c100000;
+\cssrgb\c0\c45098\c73333;\cssrgb\c94510\c98039\c100000;\cssrgb\c98039\c98039\c98039;}
+\margl1440\margr1440\vieww29600\viewh21120\viewkind0
+\deftab720
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs26 \cf2 \expnd0\expndtw0\kerning0
+AWS SETUP\
+\
+.Net 7.0 Github -> ECR (Docker Image)-> ECS Build Process\
+\
+Source - https://docs.aws.amazon.com/codebuild/latest/userguide/sample-docker.html\
+\
+Step 1: \
+\
+	ECR\
+\
+		Go to ECR\
+\
+		Create an ECR Repo\
+\
+		Repository name - name repo\
+\
+		Create\
+\
+		*Note: We will need the repo name later on for a variable\
+\
+\
+	ECS Elastic Container Service\
+\
+		Go to ECS to begin\
+\
+		Create a new Cluster\
+	\
+			Name Cluster\
+\
+			Choose correct VPN and Subnets or create new ones\
+\
+			Infrastructure - AWS Fargate\
+	\
+			Create and Wait for creation\
+\
+\
+Step 2 Pipeline\
+\
+Create a new CodePipeline with new Role\
+\
+Step 3 Source\
+\
+	Select Github source and authorize connection\
+	\
+	Output artifact format\
+		CodePipeline default\
+\
+Step 4 Build\
+\
+	Build provider - AWS CodeBuild\
+	\
+	Create build project (popup window)\
+\
+		Project Configuration\
+		\
+			Project Name - Anything that makes sense Possibly TestApi or ReleaseApi\
+\
+		Environment\
+\
+			
+\f1\fs28 \cf3 \cb4 Environment image - 
+\f0\fs26 \cf2 \cb1 Managed Image\
+\
+			
+\f1\fs28 \cf3 \cb4 Comput\cb1 e
+\f0\fs26 \cf2  - EC2\
+\
+			OS - Ubuntu\
+\
+			Runtime(s) - Standard\
+\
+			Image - standard:6.0\
+\
+			Image version - latest\
+\
+			Privileged - Check the box to enable	\
+\
+			Service Role\
+\
+				New service role\
+\
+				Role name - your choice to change		\
+\
+		Buildspec \
+\
+			
+\f1\fs28 \cf3 \cb4 Build specifications - Use a buildspec file
+\f0\fs26 \cf2 \cb1 \
+\
+			Buildspec name - API/buildspec.yml	\
+\
+\
+		Press \'93Continue to CodePipeline\'94\
+\
+		Environment Variables\
+					AWS_DEFAULT_REGION - us-west-2\
+					AWS_ACCOUNT_ID - Current AWS Admin User ID (click on username (top right corner of AWS) and copy Account ID)\
+					AWS_ECR_REPOSITORY_URI - ECR Repo URI - Copy from ECR Page\
+					AWS_ECS_CONTAINER_NAME - ECS Container name. (We'll need to come back and fill this in later. This is created in the task definition\
+\
+\
+	Build type - Single\
+\
+Step 5  Deploy Stage\
+\
+	Skip Deploy Stage for now\
+\
+\
+\
+BUILDING\
+\
+	Source - Succeeded\
+	Build - Failed\
+\
+		[Container] 2023/05/02 18:57:25 Running command aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin 	\
+		$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com\
+\
+		An error occurred (AccessDeniedException) when calling the GetAuthorizationToken operation: \
+		User: arn:aws:sts::922916761174:assumed-role/codebuild-test-service-role/AWSCodeBuild-ffb056ab-25d4-4d44-9b10-ccdbd505ff12 is not authorized to \
+		perform: ecr:GetAuthorizationToken on resource: * because no identity-based policy allows the ecr:GetAuthorizationToken action\
+		Error: Cannot perform an interactive login from a non TTY device\
+\
+\
+Step 6: Edit CodeBuild Project Service Role\
+\
+	Go to CodePipeline -> Build -> Build Projects\
+\
+	Select Project\
+\
+	Select Tab "Build details"\
+\
+	Click on Service Role hyperlink\
+\
+	Edit Policy\
+\
+	Add:\
+\
+\{\
+  "Statement": [\
+    ### BEGIN ADDING STATEMENT HERE ###\
+    \{\
+      "Action": [\
+        "ecr:BatchCheckLayerAvailability",\
+        "ecr:CompleteLayerUpload",\
+        "ecr:GetAuthorizationToken",\
+        "ecr:InitiateLayerUpload",\
+        "ecr:PutImage",\
+        "ecr:UploadLayerPart"\
+      ],\
+      "Resource": "*",\
+      "Effect": "Allow"\
+    \},\
+    ### END ADDING STATEMENT HERE ###\
+    ...\
+  ],\
+  "Version": "2012-10-17"\
+\}\
+\
+	Save Policy\
+\
+\
+Step 7 - Go back to CodePipeline and Release Change\
+\
+	Source - Succeeded\
+	Build - Succeeded\
+\
+\
+Step 8 ECS Elastic Container Service\
+\
+	Go to ECR \
+\
+		Copy Repo URI\
+\
+	In a new Chrome Tab open IAM -> Roles\
+\
+		Create a new Role \
+			\
+			Trusted entity type - AWS service\
+\
+				Use case - Elastic Container Service - Elastic Container Service Task\
+\
+			Press Next\
+\
+			Search for Policy Name {\field{\*\fldinst{HYPERLINK "https://us-east-1.console.aws.amazon.com/iam/home?region=us-west-2#/policies/details/arn%3Aaws%3Aiam%3A%3Aaws%3Apolicy%2Fservice-role%2FAmazonECSTaskExecutionRolePolicy"}}{\fldrslt 
+\f1\fs28 \cf5 \cb6 \ul \ulc5 AmazonECSTaskExecutionRolePolicy}}\
+\
+			Press Next			\
+\
+			Role Name -> AmazonECSTaskExecutionRolePolicy\
+\
+			Create Role \
+\
+	Go to ECS -> Task Definitions\
+\
+	Create new task definition\
+\
+		Name Task\
+\
+		Container Details\
+\
+			Name - Any name for the container (We use this as a variable in the CodePipeline Build Variable - "AWS_ECS_CONTAINER_NAME"\
+\
+			Image URI - Paste in the ECR repo URI\
+\
+		Port Mappings\
+\
+			Change 80 to 5000\
+			Change App protocol from http to none\
+\
+\
+		Environment Variables\
+\
+			Add the following:\
+\
+				Key: APP_ENVIRONMENT - Production\
+\
+				Key: APP_DBCONNECTION - Value: RDS connection string\
+		CLICK NEXT \
+\
+	Change CPU and Memory as necessary or change later\
+\
+	Task Role - Add new role created for ECS\
+\
+	Task Execution Role - Add same role\
+\
+	Click Next and Create to complete Task\
+\
+Step 9 - Create Target Group\
+\
+	Go to EC2 -> Target Group\
+\
+	Choose Target Type - IP Addresses\
+\
+	Protocol: HTTP - Port: 5000\
+\
+	IP Address Type - IPv4\
+\
+	Protocol Version - HTTP 1\
+\
+	Click Next and then Click "Create Target Group" \
+\
+Step 10 - Create Security Group\
+\
+	
+\f1\fs28 \cf3 \cb4 Security group name - WebAccess\
+\
+	Description - Allow users to access ECS via SSH and Port 5000\
+\
+	VPC - Make sure you are in the same VPC\
+\
+	
+\f2\b\fs36 \cb7 Inbound rules
+\f1\b0 \cf3 \cb7 \
+\'a0\
+		Add rule\
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs26 \cf2 \cb1 		\
+			Type - Https\
+			Source - AnyWhere-IPv4\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs36 \cf3 \cb7 \
+		Add rule\
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs26 \cf2 \cb1 		\
+			Type - Custom TCP\
+			Port - 5000\
+			Source - AnyWhere-IPv4\
+	\
+	
+\f2\b\fs36 \cf3 \cb7 Outbound rules\
+
+\f0\b0\fs26 \cf2 \cb1 \
+		No Changes necessary\
+\
+	Create Security Group\
+\
+Step 11 - Create Load Balancer\
+\
+	Note: Before we start make sure you have an ACM Certificate to use with the Load Balancer\
+\
+	Go to EC2 -> Load Balancers\
+\
+	Click Create\
+\
+	Type - Application Load Balancer\
+\
+	Load Balancer Name - Name Accordingly\
+\
+	Scheme - Internet Facing\
+\
+	IP Address Type - IPv4\
+\
+	Mappings - Select all available\
+\
+	Listener\
+\
+		Protocol: HTTPS - Port: 443 - Default Action - Forward To "New Target Group"\
+\
+	Security Policy - ELB Security Policy\
+\
+	Default SSL/TLS Certification - From ACM - Select Cert\
+\
+	Click "Create Load Balancer"\
+\
+	Wait for Load Balancer to be provisioned\
+\
+\
+Step 12 - ECS Cluster Service\
+\
+	Note: Before we start make sure you have an ACM Certificate to use with the Target Group\
+\
+	Go To ECS -> Click on newly created cluster\
+\
+	Click "Create" button for a new service\
+\
+		Compute Options - Capacity provider Strategy\
+\
+		Application Type - Service\
+\
+		Task definition\
+			Family - new Task Definition we created\
+			Revision - LATEST\
+\
+		Service Name - Anything you'd like here\
+\
+		Load Balancing\
+\
+			Load Balancer Type - Application Load Balancer\
+\
+			Application Load Balancer - Use an exisiting\
+			\
+			Load Balancer - Select previously created	\
+\
+		Listener\
+\
+			Use an existing listener\
+\
+			Listener - 443:HTTPS\
+\
+		Target Group\
+\
+			Use an existing Target Group\
+\
+			Target Group Name - Select previously created TG				\
+\
+	Click Create and wait for service to start\
+		\
+\
+Step 13 - Expose API\
+\
+	Go to Route 53 -> Selected Domain associated with SSL	\
+	\
+		Create a new A Record\
+\
+		Record Name - api or similar\
+\
+		Alias - Checked\
+\
+		Route Traffic to:\
+\
+			Alias to Application and Classic Load Balancer\
+\
+			US West (Oregon)\
+\
+			dualstack.loadbalancer....\
+\
+	\
+Step 14 - Add Deploy Step in CodePipeline\
+\
+	Go to CodePipeline and select the pipeline\
+\
+	Click Edit\
+\
+	Add Stage after Build\
+\
+	Action - Amazon ECS\
+\
+	Region - US West\
+\
+	Input Artifact - BuildArtifacts\
+\
+	Cluster Name - ECS Cluster we setup\
+\
+	Service Name - ECS Service we setup\
+\
+	Image Definitions - PROJECT_DIRECTORY/imagedefinitions.json - In this app the value is API/imagedefinitions.json\
+\
+	Variable namespace - BuildArtif\
+			 \
+AWS TEARDOWN\
+\
+\
+1. Delete Route53 CNAME\
+\
+2. Delete ECS Service\
+\
+3. Delete ECS Cluster\
+\
+4. Delete EC2 Load Balancer\
+\
+5. Delete EC2 Target Group\
+\
+6. Delete Code Pipeline	\
+	\
+\
+\
+\
+\
+\
+\
+		\
+\
+\
+\
+\
+		\
+}
