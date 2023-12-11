@@ -14,76 +14,15 @@
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.13" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.13" />
-		<PackageReference Include="Leupold.Models" Version="1.0.10" />
-	</ItemGroup>
-	<ItemGroup>
-		<None Remove="Public\Firmware\" />
-	</ItemGroup>
-	<ItemGroup>
-		<None Include="wwwroot\Settings\app_settings_v31.json">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</None>
-		<None Include="wwwroot\Settings\app_settings_v35.json">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</None>
-		<None Include="wwwroot\Settings\index.json">
-		  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		  <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</None>
-	</ItemGroup>
-	<ItemGroup>
-		<None Update="Resources\BulletDatabase.xlsx">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Public\Firmware\RX5000_v166.zip">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
-	<ItemGroup>
-		<Content Remove="Resources\app_settings_v2.json" />
-		<Content Remove="Resources\EULA.json" />
-		<Content Remove="Resources\app_settings_v20 %28copy%29.json" />
-		<Content Remove="Resources\RX5000_Firmware_v166.json" />
-		<Content Remove="Resources\app_settings_v21 %28copy%29.json" />
-		<Content Remove="wwwroot\RX5000_v166.json" />
-		<Content Remove="Resources\app_settings_v22 %28copy%29.json" />
-		<Content Remove="Resources\RX5000_v166 %28copy%29.json" />
-		<Content Remove="wwwroot\Eula\" />
-		<Content Remove="wwwroot\Settings\" />
-		<Content Remove="wwwroot\Settings\app_settings_v23.json" />
-		<Content Remove="wwwroot\Settings\app_settings_v25 %28copy%29.json" />
-		<Content Remove="wwwroot\Settings\app_settings_v26 %28copy%29.json" />
-		<Content Remove="wwwroot\Settings\app_settings_v27 %28copy%29.json" />
-		<Content Remove="wwwroot\Settings\app_settings_v28 %28copy%29.json" />
-		<Content Remove="wwwroot\Settings\app_settings_v29 %28copy%29.json" />
-		<Content Remove="wwwroot\Settings\app_settings_v30 %28copy%29.json" />
-		<Content Remove="wwwroot\Settings\app_settings_v31 %28copy%29.json" />
-		<Content Remove="wwwroot\Settings\app_settings_v32 %28copy%29.json" />
-		<Content Remove="wwwroot\Settings\app_settings_v33 %28copy%29.json" />
-		<Content Remove="wwwroot\Devices\" />
-		<Content Remove="wwwroot\Devices\RX5000\" />
-		<Content Remove="wwwroot\Devices\RX5000\Firmware\" />
-		<Content Remove="wwwroot\Settings\app_settings_v35 %28copy%29.json" />
-		<Content Remove="wwwroot\Settings\Eula\" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Business\Business.csproj">
 			<GlobalPropertiesToRemove>
 			</GlobalPropertiesToRemove>
 		</ProjectReference>
-	</ItemGroup>
-	<ItemGroup>
-		<Folder Include="wwwroot\Firmware\" />
-		<Folder Include="wwwroot\Eula\" />
-		<Folder Include="wwwroot\Settings\" />
-		<Folder Include="wwwroot\Devices\" />
-		<Folder Include="wwwroot\Devices\RX5000\" />
-		<Folder Include="wwwroot\Devices\RX5000\Firmware\" />
-		<Folder Include="wwwroot\Settings\Eula\" />
+		<ProjectReference Include="..\Models\Models.csproj">
+			<GlobalPropertiesToRemove>
+			</GlobalPropertiesToRemove>
+		</ProjectReference>
 	</ItemGroup>
 </Project>

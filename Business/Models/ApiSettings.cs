@@ -1,4 +1,4 @@
-﻿using Leupold.Models;
+﻿using Models;
 
 namespace Business.Models;
 

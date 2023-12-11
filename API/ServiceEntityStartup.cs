@@ -5,7 +5,6 @@ using System.Reflection;
 using Api.Controllers;
 using Business.DataSources;
 using Business.Validators;
-using Leupold.Models;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -26,10 +25,10 @@ public static class ServiceEntityStartup
         where T : Attribute
     {
         var entities = from assembly in assemblies
-            from t in assembly.GetTypes()
-            where t.GetCustomAttributes<T>().Any()
-            where t.Name != nameof(Model)
-            select t;
+                       from t in assembly.GetTypes()
+                       where t.GetCustomAttributes<T>().Any()
+                       where t.Name != nameof(Model)
+                       select t;
 
         foreach (var entity in entities)
         {
@@ -56,9 +55,9 @@ public class AssemblyReference
     {
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
         return (from assembly in assemblies
-            from t in assembly.GetTypes()
-            where t.Name == name
-            select t).FirstOrDefault();
+                from t in assembly.GetTypes()
+                where t.Name == name
+                select t).FirstOrDefault();
     }
 }
 

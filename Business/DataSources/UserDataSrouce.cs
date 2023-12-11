@@ -1,7 +1,7 @@
 ﻿using Business.DataStores;
 using Business.Models;
 using Business.Validators;
-using Leupold.Models;
+using Models;
 
 namespace Business.DataSources;
 

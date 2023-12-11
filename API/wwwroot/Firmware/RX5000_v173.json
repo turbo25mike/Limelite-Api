@@ -1,6 +1,0 @@
-﻿{
-  "Model": "RX5000",
-  "Version": 173,
-  "Description": "RX-5000 Firmware Version 172 includes the following enhancements and bug fixes: \n*  Critical Update: Device stays connected for ~ 9 minutes with no activity. Pairing can be initiated by holding down button 1 and pressing the power on.",
-  "URL": "Firmware/RX5000_v172.zip"
-}

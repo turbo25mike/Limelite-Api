@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Business.DataSources;
 using Business.DataStores;
 using Business.Models;
-using Leupold.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;

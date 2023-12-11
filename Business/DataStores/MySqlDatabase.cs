@@ -5,10 +5,10 @@ using System.Linq;
 using System.Reflection;
 using Business.Models;
 using Dapper;
-using Leupold.Models;
+using Models;
 using MySql.Data.MySqlClient;
 using Z.BulkOperations;
-using MySqlAttribute = Leupold.Models.MySqlAttribute;
+using MySqlAttribute = Models.MySqlAttribute;
 
 namespace Business.DataStores;
 

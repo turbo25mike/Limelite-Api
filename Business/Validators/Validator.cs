@@ -1,5 +1,5 @@
 ﻿using Business.Models;
-using Leupold.Models;
+using Models;
 
 namespace Business.Validators;
 
