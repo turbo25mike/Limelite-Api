@@ -3,7 +3,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Business.DataSources;
 using Business.Models;
-using Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -69,7 +68,7 @@ public class AppController : ControllerBase
                 return $"Ping: was successful";
             }
 
-            return $"Ping failed: {response.StatusCode.ToString()}";
+            return $"Ping failed: {response.StatusCode}";
         }
         catch (Exception ex)
         {
