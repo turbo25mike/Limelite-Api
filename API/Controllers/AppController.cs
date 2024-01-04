@@ -49,7 +49,7 @@ public class AppController : ControllerBase
     [Route("db/details")]
     public AppStatus GetDbDetails() => new AppStatus() { Status = _DS.DatabaseStatus().ToString() };
 
-    [AllowAnonymous]
+    //[AllowAnonymous]
     [HttpGet("ping")]
     public string Ping() => "{ \"status\" : \"healthy\" }";
 
